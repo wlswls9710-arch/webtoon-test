@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>웹툰 A/B 테스트 대시보드</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#00DC64',
+                        'light-gray': '#F5F5F5'
+                    },
+                    fontFamily: {
+                        'pretendard': ['Pretendard', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .tab-btn {
+            background-color: #f3f4f6;
+            color: #6b7280;
+        }
+        .tab-btn.active {
+            background-color: #00DC64;
+            color: #000000;
+        }
+        .tab-container {
+            position: relative;
+        }
+    </style>
+</head>
+<body class="bg-white min-h-screen p-8 font-pretendard">
+    <div class="max-w-7xl mx-auto">
+        
+        <!-- 네이버 라인 웹툰 로고 -->
+        <div class="mb-4">
+            <img src="Naver_Line_Webtoon_logo.png" alt="Naver Line Webtoon" class="h-14">
+        </div>
+
+        <!-- 페이지 전체 제목 -->
+        <div class="text-left mb-8">
+            <h1 class="text-4xl font-bold text-gray-800 mb-4 leading-[150%]">
+                쿠키 결제 전환율 상승을 위한 UX 개선 테스트 계획
+            </h1>
+        </div>
+
+        <!-- 1. 테스트 개요 (Overview) -->
+        <div class="bg-white rounded-lg p-8 border border-gray-300 mb-8">
+            <div class="inline-block bg-primary text-black px-3 py-1 rounded-full text-sm font-semibold mb-2">
+                OVERVIEW
+            </div>
+            <h2 class="text-3xl font-bold text-gray-800 mb-2 leading-[150%]">
+                테스트 개요
+            </h2>
+            <p class="text-lg text-gray-600 mb-5 leading-[156%]">
+                쿠키 결제 전환율(CVR) 상승을 위한 자이가르닉 효과 기반 UX 개선 테스트입니다. 
+                긴장감과 기다림을 활용하여 사용자의 결제 의도를 극대화하는 방안을 검증합니다.
+            </p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <div class="p-4 border border-gray-200 rounded-lg">
+                    <h3 class="font-bold text-gray-800 mb-2">테스트 목적</h3>
+                    <p class="text-gray-600 leading-[156%]">자이가르닉 효과 기반 UX 개선으로 쿠키 결제 전환율(CVR) 상승</p>
+                </div>
+                <div class="p-4 border border-gray-200 rounded-lg">
+                    <h3 class="font-bold text-gray-800 mb-2">테스트 기간</h3>
+                    <p class="text-gray-600 leading-[156%]">2주 (회차별 데이터 확보 고려)</p>
+                </div>
+                <div class="p-4 border border-gray-200 rounded-lg">
+                    <h3 class="font-bold text-gray-800 mb-2">대상 사용자</h3>
+                    <p class="text-gray-600 leading-[156%]">한국/글로벌 iOS·Android 앱 이용자 (웹 제외)</p>
+                </div>
+            </div>
+            
+            <div class="p-4 border border-gray-200 rounded-lg">
+                <h3 class="font-bold text-gray-800 mb-2">대상 콘텐츠</h3>
+                <p class="text-gray-600 leading-[156%]">요일제 연재 신작 + 인기작 일부 (일상툰 제외)</p>
+            </div>
+        </div>
+
+        <!-- 2. 테스트 그룹 (Test Groups) -->
+        <div class="bg-white rounded-lg p-8 border border-gray-300 mb-8">
+            <div class="inline-block bg-primary text-black px-3 py-1 rounded-full text-sm font-semibold mb-2">
+                TEST GROUPS
+            </div>
+            <h2 class="text-3xl font-bold text-gray-800 mb-2 leading-[150%]">
+                테스트 그룹 구성
+            </h2>
+            <p class="text-lg text-gray-600 mb-5 max-w-md leading-[156%]">
+                4개 그룹으로 나누어 각각 다른 UX 접근법을 테스트합니다.
+            </p>
+            
+            <div class="flex gap-8">
+                <!-- 사이드 탭 네비게이션 -->
+                <div class="w-48 flex-shrink-0">
+                    <div class="bg-gray-100 p-2 rounded-lg space-y-2">
+                        <button onclick="showTab('control')" class="tab-btn active w-full text-left px-4 py-3 rounded-md text-sm font-medium transition-colors" data-tab="control">
+                            Control (대조군)
+                        </button>
+                        <button onclick="showTab('variant-a')" class="tab-btn w-full text-left px-4 py-3 rounded-md text-sm font-medium transition-colors" data-tab="variant-a">
+                            Variant A (타이머)
+                        </button>
+                        <button onclick="showTab('variant-b')" class="tab-btn w-full text-left px-4 py-3 rounded-md text-sm font-medium transition-colors" data-tab="variant-b">
+                            Variant B (티저)
+                        </button>
+                        <button onclick="showTab('variant-c')" class="tab-btn w-full text-left px-4 py-3 rounded-md text-sm font-medium transition-colors" data-tab="variant-c">
+                            Variant C (한정 할인)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 탭 콘텐츠 -->
+                <div class="flex-1">
+                    <!-- 고정된 프리뷰 영역 -->
+                    <div class="p-6 border border-gray-200 rounded-lg">
+                        <!-- 헤더 영역 -->
+                        <div id="tab-header" class="flex items-center mb-4">
+                            <div id="tab-badge" class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center mr-3">
+                                <span id="tab-letter" class="text-sm font-bold text-gray-600">C</span>
+                            </div>
+                            <h3 id="tab-title" class="text-xl font-bold text-gray-800">Control (대조군)</h3>
+                        </div>
+                        <p id="tab-description" class="text-gray-600 mb-4 leading-[156%]">기존 네이버 웹툰 UI</p>
+                        
+                        <!-- 모바일 프리뷰 (고정) -->
+                        <div class="flex justify-center mb-4">
+                            <div class="w-[375px] h-[812px] bg-black rounded-[20px] p-2 shadow-lg">
+                                <div class="w-full h-full bg-white rounded-[16px] overflow-hidden relative">
+                                    <!-- 상단 상태바 -->
+                                    <div class="bg-black text-white text-xs px-3 py-1 flex justify-between items-center">
+                                        <span>4:19</span>
+                                        <div class="flex items-center space-x-1">
+                                            <span>LTE</span>
+                                            <span>43</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- 상단 고정 영역 - 타이틀 바 -->
+                                    <div class="bg-white border-b border-gray-200 px-4 py-3">
+                                        <div class="flex items-center justify-between">
+                                            <button class="text-gray-600">◀</button>
+                                            <h3 class="text-sm font-bold text-gray-800">[시즌3] 소인국 13 (마무리)</h3>
+                                            <div class="flex items-center space-x-2">
+                                                <button class="text-gray-600">T</button>
+                                                <button class="text-gray-600">⋮</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- 웹툰 콘텐츠 (탭별로 바뀜) -->
+                                    <div class="p-4 bg-gray-100 h-full flex flex-col">
+                                        <!-- 연재 정보 및 별점 영역 -->
+                                        <div class="mb-4">
+                                            <!-- 연재 정보 -->
+                                            <div class="mb-3">
+                                                <p class="text-sm text-gray-600">
+                                                    <span class="text-black">매주</span>
+                                                    <span class="text-primary">토요일</span>
+                                                    <span class="text-black">연재</span>
+                                                </p>
+                                            </div>
+                                            
+                                            <!-- 구분선 -->
+                                            <div class="border-t border-gray-200 mb-3"></div>
+                                            
+                                            <!-- 별점 및 버튼 -->
+                                            <div class="flex items-center justify-between">
+                                                <div class="flex items-center space-x-2">
+                                                    <span class="text-black">★</span>
+                                                    <span class="text-xl font-bold text-black">9.85</span>
+                                                </div>
+                                                <button class="border border-gray-300 bg-white text-black px-3 py-1 rounded text-xs">별점주기</button>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- 구분선 -->
+                                        <div class="border-t border-gray-200 mb-4"></div>
+                                        
+                                        <!-- 다음 화 보기 섹션 (탭별로 바뀜) -->
+                                        <div id="tab-content-area" class="bg-white rounded-lg p-3 mb-4">
+                                            <!-- Control Group Content -->
+                                            <div id="control-content" class="tab-content active">
+                                                <div class="flex items-center space-x-3">
+                                                    <div class="w-16 h-20 bg-gray-300 rounded flex items-center justify-center overflow-hidden">
+                                                        <img src="wrbtoon_preview_thumbnail.png" alt="웹툰 썸네일" class="w-full h-full object-cover">
+                                                    </div>
+                                                    <div class="flex-1">
+                                                        <p class="text-sm font-bold text-gray-800 mb-1">다음 화 보기</p>
+                                                        <p class="text-xs text-gray-600">[시즌3] 소인국 에필로그 & 현여주 1</p>
+                                                    </div>
+                                                    <span class="text-gray-400">></span>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Variant A Content -->
+                                            <div id="variant-a-content" class="tab-content hidden">
+                                                <div class="flex items-center space-x-3 mb-3">
+                                                    <div class="w-16 h-20 bg-gray-300 rounded flex items-center justify-center overflow-hidden">
+                                                        <img src="wrbtoon_preview_thumbnail.png" alt="웹툰 썸네일" class="w-full h-full object-cover">
+                                                    </div>
+                                                    <div class="flex-1">
+                                                        <p class="text-sm font-bold text-gray-800 mb-1">다음 화 보기</p>
+                                                        <p class="text-xs text-gray-600">[시즌3] 소인국 에필로그 & 현여주 1</p>
+                                                    </div>
+                                                    <span class="text-gray-400">></span>
+                                                </div>
+                                                
+                                                <!-- 카운트다운 타이머 -->
+                                                <div class="bg-gray-100 border border-gray-200 text-gray-800 p-4 rounded text-center mb-3">
+                                                    <div class="text-sm text-gray-700 mb-3">무료 공개까지 <span class="font-bold">6일 12시간</span> 남음</div>
+                                                    
+                                                    <!-- 프로그레스 바 -->
+                                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                                        <div class="bg-primary h-2 rounded-full" style="width: 35%"></div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <button class="w-full bg-primary text-black py-3 rounded text-sm font-bold">지금 바로 보기</button>
+                                            </div>
+                                            
+                                            <!-- Variant B Content -->
+                                            <div id="variant-b-content" class="tab-content hidden">
+                                                <div class="flex items-center space-x-3 mb-3">
+                                                    <div class="flex-1">
+                                                        <p class="text-sm font-bold text-gray-800 mb-1">다음 화</p>
+                                                        <p class="text-xs text-gray-600">[시즌3] 소인국 에필로그 & 현여주 1</p>
+                                                    </div>
+                                                    <span class="text-gray-400">></span>
+                                                </div>
+                                                
+                                                <!-- 다음 화 이미지 -->
+                                                <div class="w-full aspect-square bg-gray-200 rounded mb-3 flex items-center justify-center relative overflow-hidden">
+                                                    <!-- 다음 화 힌트 배지 -->
+                                                    <div class="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full font-bold z-10">
+                                                        다음 화 힌트
+                                                    </div>
+                                                    <img src="preview.png" alt="다음 화 미리보기" class="w-full h-full object-cover">
+                                                </div>
+                                                
+                                                <button class="w-full bg-primary text-black py-3 rounded text-sm font-bold">다음 화 보기</button>
+                                            </div>
+                                            
+                                            <!-- Variant C Content -->
+                                            <div id="variant-c-content" class="tab-content hidden">
+                                                <div class="flex items-center space-x-3 mb-6">
+                                                    <div class="w-16 h-20 bg-gray-300 rounded flex items-center justify-center overflow-hidden">
+                                                        <img src="wrbtoon_preview_thumbnail.png" alt="웹툰 썸네일" class="w-full h-full object-cover">
+                                                    </div>
+                                                    <div class="flex-1">
+                                                        <p class="text-sm font-bold text-gray-800 mb-1">다음 화 보기</p>
+                                                        <p class="text-xs text-gray-600">[시즌3] 소인국 에필로그 & 현여주 1</p>
+                                                    </div>
+                                                    <span class="text-gray-400">></span>
+                                                </div>
+                                                
+                                                <div class="space-y-2">
+                                                    <div class="relative">
+                                                        <!-- 할인 배지 -->
+                                                        <div class="absolute -top-3 -left-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full font-bold z-10">
+                                                            1시간 한정 할인
+                                                        </div>
+                                                        <button class="w-full bg-primary text-black py-3 rounded text-sm font-bold">
+                                                            <span class="line-through font-normal">3개</span> → 쿠키 2개로 바로 보기
+                                                        </button>
+                                                    </div>
+                                                    
+                                                    <!-- 카운트다운 타이머 -->
+                                                    <div class="text-center">
+                                                        <div class="text-sm text-gray-600">남은 시간 <span class="font-bold text-red-600">12:47</span></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- 하단 고정 영역 - 좋아요, 댓글, 네비게이션 -->
+                                        <div class="bg-white border-t border-gray-200 px-4 py-3 mt-auto">
+                                            <div class="flex justify-between items-center text-xs text-gray-600">
+                                                <div class="flex items-center space-x-1">
+                                                    <span>♥</span>
+                                                    <span>2,500</span>
+                                                </div>
+                                                <div class="flex items-center space-x-1">
+                                                    <span>💬</span>
+                                                    <span>222</span>
+                                                </div>
+                                                <div class="flex items-center space-x-2">
+                                                    <span>◀</span>
+                                                    <span>☰</span>
+                                                    <span>▶</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <p id="tab-feature" class="text-sm text-gray-500">UI 특징: 텍스트만 노출</p>
+                    </div>
+                </div>
+
+                    </div>
+                </div>
+                    </div>
+
+                </div>
+
+                    <div id="variant-b" class="tab-content hidden">
+                        <div class="p-6 border border-gray-200 rounded-lg">
+                            <div class="flex items-center mb-4">
+                                <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center mr-3">
+                                    <span class="text-sm font-bold text-black">B</span>
+                                </div>
+                                <h3 class="text-xl font-bold text-gray-800">Variant B (실험군 2)</h3>
+                            </div>
+                            <p class="text-gray-600 mb-4 leading-[156%]">다음 화 티저 프리뷰 적용</p>
+                            <p class="text-sm text-gray-500">UI 특징: 다음 화 1~2컷 흐림 처리 + CTA</p>
+                        </div>
+                    </div>
+
+                    <div id="variant-c" class="tab-content hidden">
+                        <div class="p-6 border border-gray-200 rounded-lg">
+                            <div class="flex items-center mb-4">
+                                <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center mr-3">
+                                    <span class="text-sm font-bold text-black">C</span>
+                                </div>
+                                <h3 class="text-xl font-bold text-gray-800">Variant C (실험군 3)</h3>
+                            </div>
+                            <p class="text-gray-600 mb-4 leading-[156%]">완독 직후 1시간 한정 할인 전략</p>
+                            <p class="text-sm text-gray-500">UI 특징: 한정 할인 배너 + 할인가/정가 옵션</p>
+                        </div>
+                    </div>
+                </div>
+        </div>
+
+        <!-- 3. 측정 지표 (Metrics) -->
+        <div class="bg-white rounded-lg p-8 border border-gray-300 mb-8 max-w-7xl mx-auto">
+            <div class="inline-block bg-primary text-black px-3 py-1 rounded-full text-sm font-semibold mb-2">
+                METRICS
+            </div>
+            <h2 class="text-3xl font-bold text-gray-800 mb-2 leading-[150%]">
+                측정 지표 및 목표
+            </h2>
+            <p class="text-lg text-gray-600 mb-5 max-w-4xl leading-[156%]">
+                주요 성과 지표와 목표값을 설정하여 테스트 효과를 정량적으로 측정합니다.
+            </p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                <div class="p-6 border border-gray-200 rounded-lg">
+                    <h3 class="font-bold text-gray-800 mb-4">CVR</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">목표</span>
+                            <span class="text-sm font-bold text-primary">+10~12%</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">지표</span>
+                            <span class="text-sm font-bold">Conversion Rate</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">설명</span>
+                            <span class="text-sm font-bold">쿠키 결제 비율</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">현재</span>
+                            <span class="text-sm font-bold text-gray-800">기준선</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6 border border-gray-200 rounded-lg">
+                    <h3 class="font-bold text-gray-800 mb-4">ARPU</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">목표</span>
+                            <span class="text-sm font-bold text-primary">+8%</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">지표</span>
+                            <span class="text-sm font-bold">Average Revenue</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">설명</span>
+                            <span class="text-sm font-bold">사용자당 매출</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">현재</span>
+                            <span class="text-sm font-bold text-gray-800">기준선</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6 border border-gray-200 rounded-lg">
+                    <h3 class="font-bold text-gray-800 mb-4">D1 Retention</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">목표</span>
+                            <span class="text-sm font-bold text-primary">+10%</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">지표</span>
+                            <span class="text-sm font-bold">Day 1 Retention</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">설명</span>
+                            <span class="text-sm font-bold">재방문율</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">현재</span>
+                            <span class="text-sm font-bold text-gray-800">기준선</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6 border border-gray-200 rounded-lg">
+                    <h3 class="font-bold text-gray-800 mb-4">이탈률</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">목표</span>
+                            <span class="text-sm font-bold text-red-500">-5% 이하</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">지표</span>
+                            <span class="text-sm font-bold">Drop-off Rate</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">설명</span>
+                            <span class="text-sm font-bold">결제 화면 이탈</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">현재</span>
+                            <span class="text-sm font-bold text-gray-800">기준선</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. 예상 결과 (Expected Outcomes) -->
+        <div class="bg-white rounded-lg p-8 border border-gray-300 mb-8 max-w-7xl mx-auto">
+            <div class="inline-block bg-primary text-black px-3 py-1 rounded-full text-sm font-semibold mb-2">
+                EXPECTED OUTCOMES
+            </div>
+            <h2 class="text-3xl font-bold text-gray-800 mb-2 leading-[150%]">
+                예상 결과 및 기대 효과
+            </h2>
+            <p class="text-lg text-gray-600 mb-5 max-w-4xl leading-[156%]">
+                각 그룹별 예상 전환율 상승과 기대 효과를 분석한 결과입니다.
+            </p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- 예상 전환율 그래프 -->
+                <div class="p-6 border border-gray-200 rounded-lg">
+                    <h3 class="font-bold text-gray-800 mb-4">예상 전환율 상승</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Control</span>
+                            <div class="flex items-center">
+                                <div class="w-20 h-3 bg-gray-300 rounded mr-2"></div>
+                                <span class="text-sm font-bold">기준선</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Variant A</span>
+                            <div class="flex items-center">
+                                <div class="w-24 h-3 bg-blue-400 rounded mr-2"></div>
+                                <span class="text-sm font-bold text-blue-600">+5~7%</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Variant B</span>
+                            <div class="flex items-center">
+                                <div class="w-28 h-3 bg-green-400 rounded mr-2"></div>
+                                <span class="text-sm font-bold text-green-600">+8~10%</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Variant C</span>
+                            <div class="flex items-center">
+                                <div class="w-32 h-3 bg-primary rounded mr-2"></div>
+                                <span class="text-sm font-bold text-primary">+10~12%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 기대 포인트 -->
+                <div class="p-6 border border-gray-200 rounded-lg">
+                    <h3 class="font-bold text-gray-800 mb-4">기대 포인트</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-start">
+                            <div class="w-2 h-2 bg-blue-400 rounded-full mt-2 mr-3"></div>
+                            <div>
+                                <p class="text-sm font-bold text-gray-800">Variant A (타이머)</p>
+                                <p class="text-xs text-gray-600">긴장감·기다림 압박 효과</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="w-2 h-2 bg-green-400 rounded-full mt-2 mr-3"></div>
+                            <div>
+                                <p class="text-sm font-bold text-gray-800">Variant B (티저 프리뷰)</p>
+                                <p class="text-xs text-gray-600">다음 화 궁금증 극대화</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="w-2 h-2 bg-primary rounded-full mt-2 mr-3"></div>
+                            <div>
+                                <p class="text-sm font-bold text-gray-800">Variant C (한정 할인)</p>
+                                <p class="text-xs text-gray-600">긴급성과 할인 혜택으로 결제 유도</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. 데이터 집계 영역 -->
+        <div class="bg-white rounded-lg p-8 border border-gray-300 mb-8 max-w-7xl mx-auto">
+            <div class="inline-block bg-primary text-black px-3 py-1 rounded-full text-sm font-semibold mb-2">
+                DATA AGGREGATION
+            </div>
+            <h2 class="text-3xl font-bold text-gray-800 mb-2 leading-[150%]">
+                데이터 집계 및 분석
+            </h2>
+            <p class="text-lg text-gray-600 mb-5 max-w-4xl leading-[156%]">
+                테스트 결과를 종합적으로 분석하고 의사결정에 활용할 수 있는 인사이트를 제공합니다.
+            </p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="p-6 border border-gray-200 rounded-lg">
+                    <h3 class="font-bold text-gray-800 mb-4">CVR 변화량</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Control</span>
+                            <span class="text-sm font-bold">0%</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Variant A</span>
+                            <span class="text-sm font-bold text-blue-600">+6.2%</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Variant B</span>
+                            <span class="text-sm font-bold text-green-600">+9.1%</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Variant C</span>
+                            <span class="text-sm font-bold text-primary">+11.8%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-6 border border-gray-200 rounded-lg">
+                    <h3 class="font-bold text-gray-800 mb-4">ARPU 변화량</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Control</span>
+                            <span class="text-sm font-bold">0%</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Variant A</span>
+                            <span class="text-sm font-bold text-blue-600">+4.5%</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Variant B</span>
+                            <span class="text-sm font-bold text-green-600">+7.2%</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Variant C</span>
+                            <span class="text-sm font-bold text-primary">+9.1%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-6 border border-gray-200 rounded-lg">
+                    <h3 class="font-bold text-gray-800 mb-4">D1 Retention 변화량</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Control</span>
+                            <span class="text-sm font-bold">0%</span>
+                        </div>
+                        <div class="text-sm text-gray-600">Variant A</span>
+                            <span class="text-sm font-bold text-blue-600">+8.3%</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Variant B</span>
+                            <span class="text-sm font-bold text-green-600">+11.2%</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Variant C</span>
+                            <span class="text-sm font-bold text-primary">+13.7%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 이탈률 변화량 카드 추가 -->
+                <div class="p-6 border border-gray-200 rounded-lg">
+                    <h3 class="font-bold text-gray-800 mb-4">이탈률 변화량</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Control</span>
+                            <span class="text-sm font-bold">0%</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Variant A</span>
+                            <span class="text-sm font-bold text-red-500">-2.1%</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Variant B</span>
+                            <span class="text-sm font-bold text-red-500">-3.8%</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Variant C</span>
+                            <span class="text-sm font-bold text-red-500">-5.2%</span>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                <h3 class="font-bold text-gray-800 mb-2">결론 및 권장사항</h3>
+                <p class="text-sm text-gray-600 leading-[156%]">
+                    Variant C (한정 할인)가 가장 높은 성과를 보이며, 1시간 한정 할인과 긴급성을 통해 
+                    사용자의 결제 의도를 효과적으로 높일 수 있습니다. Variant B (티저 프리뷰)도 꾸준한 
+                    성과를 보이므로 두 방안을 조합한 하이브리드 접근법을 고려해볼 수 있습니다.
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function showTab(tabName) {
+            // 탭 버튼 활성화
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            tabButtons.forEach(button => {
+                button.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // 헤더 정보 업데이트
+            const tabData = {
+                'control': {
+                    letter: 'C',
+                    title: 'Control (대조군)',
+                    description: '기존 네이버 웹툰 UI',
+                    feature: 'UI 특징: 텍스트만 노출'
+                },
+                'variant-a': {
+                    letter: 'A',
+                    title: 'Variant A (실험군 1)',
+                    description: '1주일 카운트다운 타이머 적용',
+                    feature: 'UI 특징: 실시간 카운트다운'
+                },
+                'variant-b': {
+                    letter: 'B',
+                    title: 'Variant B (실험군 2)',
+                    description: '다음 화 티저 프리뷰 적용',
+                    feature: 'UI 특징: 다음 화 1~2컷 흐림 처리 + CTA'
+                },
+                'variant-c': {
+                    letter: 'C',
+                    title: 'Variant C (실험군 3)',
+                    description: '완독 직후 1시간 한정 할인 전략',
+                    feature: 'UI 특징: 한정 할인 배너 + 할인가/정가 옵션'
+                }
+            };
+            
+            const data = tabData[tabName];
+            document.getElementById('tab-letter').textContent = data.letter;
+            document.getElementById('tab-title').textContent = data.title;
+            document.getElementById('tab-description').textContent = data.description;
+            document.getElementById('tab-feature').textContent = data.feature;
+            
+            // 배지 색상 업데이트
+            const badge = document.getElementById('tab-badge');
+            if (tabName === 'control') {
+                badge.className = 'w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center mr-3';
+            } else {
+                badge.className = 'w-8 h-8 bg-primary rounded-full flex items-center justify-center mr-3';
+            }
+            
+            // 콘텐츠 영역 업데이트
+            const contentAreas = document.querySelectorAll('#tab-content-area .tab-content');
+            contentAreas.forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(tabName + '-content').classList.add('active');
+        }
+    </script>
+</body>
+</html>
